@@ -3,7 +3,7 @@ const router = express.Router();
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const { signup, login, logout } = require('../controllers/auth.controller');
-const { getProfile, updateProfile } = require('../controllers/user.controller');
+const { getProfile, updateProfile, getAllUsers, updateUser, deleteUser } = require('../controllers/user.controller');
 const { searchMovie, getMovie, createMovie, updateMovie, deleteMovie } = require('../controllers/movie.controller');
 const { getFavorites, addFavorite, deleteFavorite } = require('../controllers/favorite.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
@@ -16,6 +16,11 @@ router.post('/logout', logout);
 // Perfil
 router.get('/user', authMiddleware, getProfile);
 router.put('/user', authMiddleware, updateProfile);
+
+// Admin - usuarios
+router.get('/users', authMiddleware, adminMiddleware, getAllUsers);
+router.put('/user/:id', authMiddleware, adminMiddleware, updateUser);
+router.delete('/user/:id', authMiddleware, adminMiddleware, deleteUser);
 
 // Películas
 router.get('/movie/:title', authMiddleware, searchMovie);
