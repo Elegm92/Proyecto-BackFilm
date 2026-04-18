@@ -56,7 +56,7 @@ const login = async (req, res) => {
     );
 
     res.cookie('token', token, { httpOnly: true });
-    res.status(200).json({ mensaje: 'Login correcto' });
+res.status(200).json({ mensaje: 'Login correcto', role: usuario.role });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error al iniciar sesión' });

@@ -1,0 +1,18 @@
+<!-- cambia dependiendo de si el usuario está logueado o no, y si es admin o user -->
+ <nav class="menu">
+  <% if (user) { %>
+    <% if (user.role === 'admin') { %>
+      <a href="/users">Usuarios</a>
+      <a href="/movies">Películas</a>
+    <% } else { %>
+      <a href="/dashboard">Inicio</a>
+      <a href="/search">Buscador</a>
+      <a href="/favorites">Favoritos</a>
+      <a href="/profile">Perfil</a>
+    <% } %>
+    <a href="/api/logout">Cerrar sesión</a>
+  <% } else { %>
+    <a href="/login">Login</a>
+    <a href="/signup">Registro</a>
+  <% } %>
+</nav>

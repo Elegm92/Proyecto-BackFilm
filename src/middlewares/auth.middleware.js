@@ -1,21 +1,31 @@
 //Proteger las rutas privadas, es decir, comprobará que el usuario tiene un token JWT válido antes de dejarle acceder.
 //Aqui instalamos npm install cookie-parser
 //Guaramos el token en cookie
+//Pinta el usuario que esta logueado en ese momento
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
-const authMiddleware = (req, res, next) => {
+const authMiddleware = async (req, res, next) => {
   try {
     const token = req.cookies.token;
 
     if (!token) {
-      return res.status(401).json({ error: 'Acceso no autorizado' });
+      return res.redirect('/login');
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
+    const usuario = await User.findByPk(decoded.id, {
+      attributes: { exclude: ['password_hash', 'reset_token', 'reset_token_exp'] }
+    });
+
+    if (!usuario) {
+      return res.redirect('/login');
+    }
+
+    req.user = usuario;
     next();
   } catch (error) {
-    return res.status(401).json({ error: 'Token inválido' });
+    return res.redirect('/login');
   }
 };
 
