@@ -66,7 +66,7 @@ res.status(200).json({ mensaje: 'Login correcto', role: usuario.role });
 // Logout
 const logout = (req, res) => {
   res.clearCookie('token');
-  res.status(200).json({ mensaje: 'Logout correcto' });
+  res.redirect('/login');
 };
 
 module.exports = { signup, login, logout };

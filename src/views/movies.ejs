@@ -1,10 +1,114 @@
+<!-- vista de gestión de películas para el admin -->
 <%- include('partials/header') %>
 <%- include('partials/menu') %>
 
 <main class="container">
   <h1>Gestión de películas</h1>
   <button class="btn" onclick="showForm()">Crear nueva película</button>
-  <div id="movies-grid"></div>
+
+  <div id="movie-form" style="display:none">
+    <h2 id="form-title">Nueva película</h2>
+    <input type="hidden" id="movie-id">
+    <input type="text" id="titulo" placeholder="Título">
+    <input type="text" id="imagen" placeholder="URL imagen">
+    <input type="number" id="anio" placeholder="Año">
+    <input type="text" id="director" placeholder="Director">
+    <input type="text" id="genero" placeholder="Género">
+    <input type="text" id="duracion" placeholder="Duración">
+    <button class="btn" onclick="saveMovie()">Guardar</button>
+    <button class="btn" onclick="hideForm()">Cancelar</button>
+  </div>
+
+  <div id="movies-list"></div>
 </main>
+
+<script>
+  const showForm = () => {
+    document.getElementById('movie-form').style.display = 'block';
+    document.getElementById('form-title').textContent = 'Nueva película';
+    document.getElementById('movie-id').value = '';
+    document.getElementById('titulo').value = '';
+    document.getElementById('imagen').value = '';
+    document.getElementById('anio').value = '';
+    document.getElementById('director').value = '';
+    document.getElementById('genero').value = '';
+    document.getElementById('duracion').value = '';
+  };
+
+  const hideForm = () => {
+    document.getElementById('movie-form').style.display = 'none';
+  };
+
+  const loadMovies = async () => {
+    const res = await fetch('/api/movies');
+    const movies = await res.json();
+
+    const list = document.getElementById('movies-list');
+
+    if (!movies.length) {
+      list.innerHTML = '<p>No hay películas</p>';
+      return;
+    }
+
+    list.innerHTML = movies.map(movie => `
+      <div class="movie-card">
+        <img src="${movie.imagen}" alt="${movie.titulo}">
+        <h3>${movie.titulo}</h3>
+        <p>${movie.anio} - ${movie.director}</p>
+        <button class="btn" onclick="editMovie('${movie._id}', '${movie.titulo}', '${movie.imagen}', ${movie.anio}, '${movie.director}', '${movie.genero}', '${movie.duracion}')">Editar</button>
+        <button class="btn" onclick="deleteMovie('${movie._id}')">Eliminar</button>
+      </div>
+    `).join('');
+  };
+
+  const saveMovie = async () => {
+    const id = document.getElementById('movie-id').value;
+    const body = {
+      titulo: document.getElementById('titulo').value,
+      imagen: document.getElementById('imagen').value,
+      anio: document.getElementById('anio').value,
+      director: document.getElementById('director').value,
+      genero: document.getElementById('genero').value,
+      duracion: document.getElementById('duracion').value
+    };
+
+    const url = id ? `/api/movie/${id}` : '/api/movie';
+    const method = id ? 'PUT' : 'POST';
+
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+
+    const data = await res.json();
+    alert(data.mensaje || data.error);
+    hideForm();
+    loadMovies();
+  };
+
+  const editMovie = (id, titulo, imagen, anio, director, genero, duracion) => {
+    document.getElementById('movie-form').style.display = 'block';
+    document.getElementById('form-title').textContent = 'Editar película';
+    document.getElementById('movie-id').value = id;
+    document.getElementById('titulo').value = titulo;
+    document.getElementById('imagen').value = imagen;
+    document.getElementById('anio').value = anio;
+    document.getElementById('director').value = director;
+    document.getElementById('genero').value = genero;
+    document.getElementById('duracion').value = duracion;
+  };
+
+  const deleteMovie = async (id) => {
+    if (!confirm('¿Estás segura de que quieres eliminar esta película?')) return;
+
+    const res = await fetch(`/api/movie/${id}`, { method: 'DELETE' });
+    const data = await res.json();
+    alert(data.mensaje || data.error);
+    loadMovies();
+  };
+
+  loadMovies();
+</script>
 
 <%- include('partials/footer') %>

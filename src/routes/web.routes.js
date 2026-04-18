@@ -30,7 +30,7 @@ router.get('/search', authMiddleware, (req, res) => {
 
 // Detalle película
 router.get('/search/:title', authMiddleware, (req, res) => {
-  res.render('movie', { title: 'Película', user: req.user });
+  res.render('movie-detail', { title: req.params.title, user: req.user });
 });
 
 // Favoritos
