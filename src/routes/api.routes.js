@@ -4,7 +4,9 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const { signup, login, logout } = require('../controllers/auth.controller');
 const { getProfile, updateProfile } = require('../controllers/user.controller');
+const { searchMovie, getMovie, createMovie, updateMovie, deleteMovie } = require('../controllers/movie.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
+const adminMiddleware = require('../middlewares/role.middleware');
 
 router.post('/signup', signup);
 router.post('/login', login);
@@ -13,6 +15,12 @@ router.post('/logout', logout);
 // Perfil
 router.get('/user', authMiddleware, getProfile);
 router.put('/user', authMiddleware, updateProfile);
+
+// Películas
+router.get('/movie/:title', authMiddleware, searchMovie);
+router.post('/movie', authMiddleware, adminMiddleware, createMovie);
+router.put('/movie/:id', authMiddleware, adminMiddleware, updateMovie);
+router.delete('/movie/:id', authMiddleware, adminMiddleware, deleteMovie);
 
 // Google OAuth
 router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
