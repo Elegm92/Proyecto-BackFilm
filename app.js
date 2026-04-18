@@ -33,6 +33,8 @@ app.use(express.static('./src/public'));
 // Rutas
 const apiRoutes = require('./src/routes/api.routes');
 app.use('/api', apiRoutes);
+const webRoutes = require('./src/routes/web.routes');
+app.use('/', webRoutes);
 
 // Ruta de prueba
 app.get('/', (req, res) => {

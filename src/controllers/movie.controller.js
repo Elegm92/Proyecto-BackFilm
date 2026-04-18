@@ -117,4 +117,16 @@ const deleteMovie = async (req, res) => {
   }
 };
 
-module.exports = { searchMovie, getMovie, createMovie, updateMovie, deleteMovie };
+//Enseñar en el dashboard las peliculas de omdb mas populares
+// Obtener películas populares para el dashboard
+const getPopularMovies = async (req, res) => {
+  try {
+    const movies = await searchMovies('marvel');
+    res.status(200).json(movies);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener películas populares' });
+  }
+};
+
+module.exports = { searchMovie, getMovie, createMovie, updateMovie, deleteMovie, getPopularMovies };
