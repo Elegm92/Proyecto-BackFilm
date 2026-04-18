@@ -2,7 +2,11 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const cookieParser = require('cookie-parser');
+const passport = require('./src/config/passport');
+
+
 app.use(cookieParser());
+app.use(passport.initialize());
 
 const connectMongo = require('./src/config/db.mongo');
 connectMongo();
