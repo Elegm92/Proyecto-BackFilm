@@ -8,6 +8,10 @@
     "dev": "node --watch app.js",
     "test": "jest"
   },
+  "jest": {
+  "testEnvironment": "node",
+  "testTimeout": 10000
+},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Elegm92/Proyecto-BackFilm.git"
