@@ -1,0 +1,61 @@
+<%- include('partials/header') %>
+<%- include('partials/menu') %>
+
+<main class="container">
+  <h1>Gestión de usuarios</h1>
+  <div id="users-list"></div>
+</main>
+
+<script>
+  const loadUsers = async () => {
+    const res = await fetch('/api/users');
+    const users = await res.json();
+
+    const list = document.getElementById('users-list');
+
+    if (!users.length) {
+      list.innerHTML = '<p>No hay usuarios</p>';
+      return;
+    }
+
+    list.innerHTML = users.map(user => `
+      <div class="user-card">
+        <p><strong>${user.nombre}</strong> - ${user.email} - ${user.role}</p>
+        <button class="btn" onclick="editUser(${user.id}, '${user.nombre}', '${user.email}', '${user.role}')">Editar</button>
+        <button class="btn" onclick="deleteUser(${user.id})">Eliminar</button>
+      </div>
+    `).join('');
+  };
+
+  const editUser = async (id, nombre, email, role) => {
+    const nuevoNombre = prompt('Nombre:', nombre);
+    const nuevoEmail = prompt('Email:', email);
+    const nuevoRole = prompt('Role (user/admin):', role);
+
+    const res = await fetch(`/api/user/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nombre: nuevoNombre, email: nuevoEmail, role: nuevoRole })
+    });
+
+    const data = await res.json();
+    alert(data.mensaje || data.error);
+    loadUsers();
+  };
+
+  const deleteUser = async (id) => {
+    if (!confirm('¿Estás segura de que quieres eliminar este usuario?')) return;
+
+    const res = await fetch(`/api/user/${id}`, {
+      method: 'DELETE'
+    });
+
+    const data = await res.json();
+    alert(data.mensaje || data.error);
+    loadUsers();
+  };
+
+  loadUsers();
+</script>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,53 @@
+<!-- crear view de detalles de peliculas -->
+<%- include('partials/header') %>
+<%- include('partials/menu') %>
+
+<main class="container">
+  <div id="movie-detail"></div>
+</main>
+
+<script>
+  const loadMovie = async () => {
+    const imdbID = '<%= title %>';
+
+    const res = await fetch(`/api/movie/detail/${imdbID}`);
+    const movie = await res.json();
+
+    if (!movie || movie.error) {
+      document.getElementById('movie-detail').innerHTML = '<p>Película no encontrada</p>';
+      return;
+    }
+
+    document.getElementById('movie-detail').innerHTML = `
+      <div class="movie-detail">
+        <img src="${movie.Poster !== 'N/A' ? movie.Poster : '/img/no-poster.jpg'}" alt="${movie.Title}">
+        <div class="movie-info">
+          <h1>${movie.Title}</h1>
+          <p><strong>Año:</strong> ${movie.Year}</p>
+          <p><strong>Director:</strong> ${movie.Director}</p>
+          <p><strong>Género:</strong> ${movie.Genre}</p>
+          <p><strong>Duración:</strong> ${movie.Runtime}</p>
+          <p><strong>Actores:</strong> ${movie.Actors}</p>
+          <p><strong>Sinopsis:</strong> ${movie.Plot}</p>
+          <p><strong>Rating:</strong> ${movie.imdbRating}</p>
+          <button class="btn" onclick="addFavorite('${movie.imdbID}', 'omdb')">Añadir a favoritos</button>
+        </div>
+      </div>
+    `;
+  };
+
+  const addFavorite = async (movie_ref, movie_source) => {
+    const res = await fetch('/api/favorites', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ movie_ref, movie_source })
+    });
+
+    const data = await res.json();
+    alert(data.mensaje || data.error);
+  };
+
+  loadMovie();
+</script>
+
+<%- include('partials/footer') %>

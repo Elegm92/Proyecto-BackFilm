@@ -4,7 +4,7 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const { signup, login, logout } = require('../controllers/auth.controller');
 const { getProfile, updateProfile, getAllUsers, updateUser, deleteUser } = require('../controllers/user.controller');
-const { searchMovie, getMovie, createMovie, updateMovie, deleteMovie, getPopularMovies } = require('../controllers/movie.controller');
+const { searchMovie, getMovie, createMovie, updateMovie, deleteMovie, getPopularMovies, getAllMovies } = require('../controllers/movie.controller');
 const { getFavorites, addFavorite, deleteFavorite } = require('../controllers/favorite.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
 const adminMiddleware = require('../middlewares/role.middleware');
@@ -23,7 +23,9 @@ router.put('/user/:id', authMiddleware, adminMiddleware, updateUser);
 router.delete('/user/:id', authMiddleware, adminMiddleware, deleteUser);
 
 // Películas
+router.get('/movies', authMiddleware, adminMiddleware, getAllMovies);
 router.get('/movie/popular', authMiddleware, getPopularMovies);//Ruta para dashboard de peliculas populares
+router.get('/movie/detail/:imdbID', authMiddleware, getMovie);
 router.get('/movie/:title', authMiddleware, searchMovie);
 router.post('/movie', authMiddleware, adminMiddleware, createMovie);
 router.put('/movie/:id', authMiddleware, adminMiddleware, updateMovie);

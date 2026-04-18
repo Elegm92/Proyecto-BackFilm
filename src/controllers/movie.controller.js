@@ -32,17 +32,15 @@ const searchMovie = async (req, res) => {
 // Obtener detalle de una película
 const getMovie = async (req, res) => {
   try {
-    const { title } = req.params;
+    const { imdbID } = req.params;
 
-    // Busca en OMDB por imdbID
-    const omdbMovie = await getMovieById(title);
+    const omdbMovie = await getMovieById(imdbID);
 
     if (omdbMovie) {
       return res.status(200).json(omdbMovie);
     }
 
-    // Si no encuentra en OMDB busca en MongoDB
-    const mongoMovie = await Movie.findById(title);
+    const mongoMovie = await Movie.findById(imdbID);
 
     if (!mongoMovie) {
       return res.status(404).json({ mensaje: 'Película no encontrada' });
@@ -129,4 +127,15 @@ const getPopularMovies = async (req, res) => {
   }
 };
 
-module.exports = { searchMovie, getMovie, createMovie, updateMovie, deleteMovie, getPopularMovies };
+// Obtener todas las películas de MongoDB (admin)
+const getAllMovies = async (req, res) => {
+  try {
+    const movies = await Movie.find();
+    res.status(200).json(movies);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener las películas' });
+  }
+};
+
+module.exports = { searchMovie, getMovie, createMovie, updateMovie, deleteMovie, getPopularMovies, getAllMovies };

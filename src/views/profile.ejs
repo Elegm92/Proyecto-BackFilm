@@ -1,0 +1,36 @@
+<%- include('partials/header') %>
+<%- include('partials/menu') %>
+
+<main class="container">
+  <h1>Mi perfil</h1>
+  <form id="profileForm">
+    <input type="text" id="nombre" placeholder="Nombre" value="<%= user.nombre %>">
+    <input type="email" id="email" placeholder="Email" value="<%= user.email %>">
+    <input type="password" id="password" placeholder="Nueva contraseña (opcional)">
+    <button type="submit" class="btn">Guardar cambios</button>
+  </form>
+</main>
+
+<script>
+  document.getElementById('profileForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const nombre = document.getElementById('nombre').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    const body = { nombre, email };
+    if (password) body.password = password;
+
+    const res = await fetch('/api/user', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+
+    const data = await res.json();
+    alert(data.mensaje || data.error);
+  });
+</script>
+
+<%- include('partials/footer') %>

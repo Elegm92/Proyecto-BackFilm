@@ -1,0 +1,60 @@
+<!-- crear la vista del buscador. -->
+<%- include('partials/header') %>
+<%- include('partials/menu') %>
+
+<main class="container">
+  <h1>Buscador de películas</h1>
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Busca una película...">
+    <button class="btn" onclick="searchMovies()">Buscar</button>
+  </div>
+  <div id="movies-grid"></div>
+</main>
+
+<script>
+  const searchMovies = async () => {
+    const title = document.getElementById('searchInput').value;
+
+    if (!title) {
+      alert('Escribe el título de una película');
+      return;
+    }
+
+    const res = await fetch(`/api/movie/${title}`);
+    const movies = await res.json();
+
+    const grid = document.getElementById('movies-grid');
+
+    if (!movies.length) {
+      grid.innerHTML = '<p>No hay resultados</p>';
+      return;
+    }
+
+    grid.innerHTML = movies.map(movie => `
+      <div class="movie-card">
+        <img src="${movie.Poster !== 'N/A' ? movie.Poster : '/img/no-poster.jpg'}" alt="${movie.Title}">
+        <h3>${movie.Title}</h3>
+        <p>${movie.Year}</p>
+        <a href="/search/${movie.imdbID}" class="btn">Ver detalle</a>
+        <button class="btn" onclick="addFavorite('${movie.imdbID}', 'omdb')">Añadir a favoritos</button>
+      </div>
+    `).join('');
+  };
+
+  const addFavorite = async (movie_ref, movie_source) => {
+    const res = await fetch('/api/favorites', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ movie_ref, movie_source })
+    });
+
+    const data = await res.json();
+    alert(data.mensaje || data.error);
+  };
+
+  document.getElementById('searchInput').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') searchMovies();
+  });
+</script>
+
+<%- include('partials/footer') %>
