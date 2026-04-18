@@ -3,11 +3,16 @@ const router = express.Router();
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const { signup, login, logout } = require('../controllers/auth.controller');
+const { getProfile, updateProfile } = require('../controllers/user.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
 
 router.post('/signup', signup);
 router.post('/login', login);
 router.post('/logout', logout);
+
+// Perfil
+router.get('/user', authMiddleware, getProfile);
+router.put('/user', authMiddleware, updateProfile);
 
 // Google OAuth
 router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
