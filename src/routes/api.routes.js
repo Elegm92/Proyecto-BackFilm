@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const { signup, login, logout } = require('../controllers/auth.controller');
 const { getProfile, updateProfile } = require('../controllers/user.controller');
 const { searchMovie, getMovie, createMovie, updateMovie, deleteMovie } = require('../controllers/movie.controller');
+const { getFavorites, addFavorite, deleteFavorite } = require('../controllers/favorite.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
 const adminMiddleware = require('../middlewares/role.middleware');
 
@@ -21,6 +22,11 @@ router.get('/movie/:title', authMiddleware, searchMovie);
 router.post('/movie', authMiddleware, adminMiddleware, createMovie);
 router.put('/movie/:id', authMiddleware, adminMiddleware, updateMovie);
 router.delete('/movie/:id', authMiddleware, adminMiddleware, deleteMovie);
+
+// Favoritos
+router.get('/favorites', authMiddleware, getFavorites);
+router.post('/favorites', authMiddleware, addFavorite);
+router.delete('/favorites/:movie_ref', authMiddleware, deleteFavorite);
 
 // Google OAuth
 router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
